@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  criadoEm  DateTime @default(now())
+
+  leads      Lead[]
+  instancias WhatsappInstance[]
+  workflows  Workflow[]
+}
+
+model Lead {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  telefone String
+  endereco String
+  segmento String
+  cidade   String
+  status   String   @default("Novo")
+  criadoEm DateTime @default(now())
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  execucoes WorkflowExecution[]
+
+  @@unique([telefone, nome, usuarioId])
+}
+
+model WhatsappInstance {
+  id            Int      @id @default(autoincrement())
+  nomeInstancia String
+  status        String   @default("aguardando_qrcode")
+  criadoEm      DateTime @default(now())
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  execucoes WorkflowExecution[]
+}
+
+model Workflow {
+  id            Int      @id @default(autoincrement())
+  nome          String
+  estruturaJson Json
+  criadoEm      DateTime @default(now())
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  execucoes WorkflowExecution[]
+}
+
+model WorkflowExecution {
+  id           Int      @id @default(autoincrement())
+  status       String
+  mensagemErro String?
+  executadoEm  DateTime @default(now())
+
+  workflow   Workflow @relation(fields: [workflowId], references: [id])
+  workflowId Int
+
+  lead   Lead @relation(fields: [leadId], references: [id])
+  leadId Int
+
+  instancia   WhatsappInstance @relation(fields: [instanciaId], references: [id])
+  instanciaId Int
+}
