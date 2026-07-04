@@ -1,0 +1,33 @@
+services:
+  evolution-postgres:
+    image: postgres:15-alpine
+    container_name: evolution_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=evolution
+      - POSTGRES_PASSWORD=evolution123
+      - POSTGRES_DB=evolution
+    volumes:
+      - evolution_postgres_data:/var/lib/postgresql/data
+
+  evolution-api:
+    image: evoapicloud/evolution-api:v2.3.7
+    container_name: evolution_api
+    restart: always
+    depends_on:
+      - evolution-postgres
+    ports:
+      - "8080:8080"
+    environment:
+      - AUTHENTICATION_API_KEY=chave-secreta-leadflow-123
+      - DATABASE_ENABLED=true
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://evolution:evolution123@evolution-postgres:5432/evolution
+      - DATABASE_SAVE_DATA_INSTANCE=true
+      - CORS_ORIGIN=*
+    volumes:
+      - evolution_instances:/evolution/instances
+
+volumes:
+  evolution_instances:
+  evolution_postgres_data:
