@@ -26,6 +26,8 @@ model Lead {
   segmento String
   cidade   String
   status   String   @default("Novo")
+  urlSite  String?
+  temSiteProprio Boolean  @default(false)
   criadoEm DateTime @default(now())
 
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
