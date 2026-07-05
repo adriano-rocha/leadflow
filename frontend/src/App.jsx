@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthProvider';
 import RotaProtegida from './components/RotaProtegida';
 import Login from './pages/Login';
 import Painel from './pages/Painel';
+import Instancias from './pages/Instancias';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     element: (
       <RotaProtegida>
         <Painel />
+        <Instancias />
       </RotaProtegida>
     ),
   },
