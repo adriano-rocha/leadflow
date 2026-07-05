@@ -15,6 +15,13 @@ const router = createBrowserRouter([
     element: (
       <RotaProtegida>
         <Painel />
+      </RotaProtegida>
+    ),
+  },
+  {
+    path: '/instancias',
+    element: (
+      <RotaProtegida>
         <Instancias />
       </RotaProtegida>
     ),
