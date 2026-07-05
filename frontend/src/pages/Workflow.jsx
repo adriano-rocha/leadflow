@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -12,6 +12,7 @@ import StartNode from '../components/workflow/StartNode';
 import MessageNode from '../components/workflow/MessageNode';
 import DelayNode from '../components/workflow/DelayNode';
 import ImageNode from '../components/workflow/ImageNode';
+import { salvarWorkflow, listarWorkflows, buscarWorkflowPorId } from '../services/workflowService';
 import './Workflow.css';
 
 const nodeTypes = {
@@ -30,6 +31,9 @@ let proximoId = 2;
 function Workflow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(nosIniciais);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nomeWorkflow, setNomeWorkflow] = useState('');
+  const [workflowsSalvos, setWorkflowsSalvos] = useState([]);
+  const [mensagemStatus, setMensagemStatus] = useState('');
 
   const onConnect = useCallback(
     (params) => setEdges((edgesAtuais) => addEdge(params, edgesAtuais)),
@@ -46,12 +50,76 @@ function Workflow() {
     setNodes((nosAtuais) => [...nosAtuais, novoNo]);
   }
 
+  async function handleSalvar() {
+    if (!nomeWorkflow) {
+      setMensagemStatus('Digite um nome pro workflow antes de salvar');
+      return;
+    }
+
+    try {
+      const estruturaJson = { nodes, edges };
+      await salvarWorkflow(nomeWorkflow, estruturaJson);
+      setMensagemStatus('Workflow salvo com sucesso!');
+      carregarListaWorkflows();
+    } catch (err) {
+      console.error(err);
+      setMensagemStatus('Erro ao salvar workflow');
+    }
+  }
+
+  async function carregarListaWorkflows() {
+    try {
+      const dados = await listarWorkflows();
+      setWorkflowsSalvos(dados.workflows);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleCarregar(id) {
+    if (!id) return;
+
+    try {
+      const dados = await buscarWorkflowPorId(id);
+      const { nodes: nosCarregados, edges: arestasCarregadas } = dados.workflow.estruturaJson;
+      setNodes(nosCarregados);
+      setEdges(arestasCarregadas);
+      setNomeWorkflow(dados.workflow.nome);
+      setMensagemStatus('Workflow carregado!');
+    } catch (err) {
+      console.error(err);
+      setMensagemStatus('Erro ao carregar workflow');
+    }
+  }
+
+  useEffect(() => {
+    carregarListaWorkflows();
+  }, []);
+
   return (
     <div className="workflow-container">
       <div className="workflow-toolbar">
         <button onClick={() => adicionarNo('mensagem')}>+ Mensagem</button>
         <button onClick={() => adicionarNo('delay')}>+ Delay</button>
         <button onClick={() => adicionarNo('imagem')}>+ Imagem</button>
+
+        <input
+          type="text"
+          placeholder="Nome do workflow"
+          value={nomeWorkflow}
+          onChange={(e) => setNomeWorkflow(e.target.value)}
+          style={{ marginLeft: 20 }}
+        />
+        <button onClick={handleSalvar}>💾 Salvar</button>
+
+        <select onChange={(e) => handleCarregar(e.target.value)} defaultValue="">
+          <option value="" disabled>Carregar workflow salvo...</option>
+          {workflowsSalvos.map((wf) => (
+            <option key={wf.id} value={wf.id}>{wf.nome}</option>
+          ))}
+        </select>
+
+        {mensagemStatus && <span style={{ marginLeft: 10 }}>{mensagemStatus}</span>}
       </div>
       <div className="workflow-canvas">
         <ReactFlow
@@ -61,6 +129,7 @@ function Workflow() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
+          deleteKeyCode={['Backspace', 'Delete']}
           fitView
         >
           <Background />

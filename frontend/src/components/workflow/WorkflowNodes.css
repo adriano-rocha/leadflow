@@ -9,9 +9,26 @@
 }
 
 .node-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 13px;
+}
+
+.node-excluir {
+  background: none;
+  border: none;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+
+.node-excluir:hover {
+  color: var(--cor-vermelho);
 }
 
 .node-inicio {

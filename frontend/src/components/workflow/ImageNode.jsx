@@ -2,12 +2,19 @@ import { Handle, Position, useReactFlow } from '@xyflow/react';
 import './WorkflowNodes.css';
 
 function ImageNode({ id, data }) {
-  const { updateNodeData } = useReactFlow();
+  const { updateNodeData, setNodes } = useReactFlow();
+
+  function excluirNo() {
+    setNodes((nos) => nos.filter((no) => no.id !== id));
+  }
 
   return (
     <div className="node-card node-imagem">
       <Handle type="target" position={Position.Left} />
-      <div className="node-header">🖼️ Imagem</div>
+      <div className="node-header">
+        <span>🖼️ Imagem</span>
+        <button className="node-excluir" onClick={excluirNo}>✕</button>
+      </div>
       <input
         type="text"
         className="node-input"

@@ -2,12 +2,19 @@ import { Handle, Position, useReactFlow } from '@xyflow/react';
 import './WorkflowNodes.css';
 
 function MessageNode({ id, data }) {
-  const { updateNodeData } = useReactFlow();
+  const { updateNodeData, setNodes } = useReactFlow();
+
+  function excluirNo() {
+    setNodes((nos) => nos.filter((no) => no.id !== id));
+  }
 
   return (
     <div className="node-card node-mensagem">
       <Handle type="target" position={Position.Left} />
-      <div className="node-header">💬 Mensagem</div>
+      <div className="node-header">
+        <span>💬 Mensagem</span>
+        <button className="node-excluir" onClick={excluirNo}>✕</button>
+      </div>
       <textarea
         className="node-textarea"
         value={data.texto || ''}
