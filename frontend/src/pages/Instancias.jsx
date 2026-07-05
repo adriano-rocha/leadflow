@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { criarInstancia, verificarStatus } from '../services/instanciaService';
+import './Instancias.css';
 
 function Instancias() {
   const [nomeInstancia, setNomeInstancia] = useState('');
@@ -30,7 +32,6 @@ function Instancias() {
   }
 
   function iniciarVerificacao(nome) {
-    // Verifica o status a cada 3 segundos
     intervalRef.current = setInterval(async () => {
       try {
         const resposta = await verificarStatus(nome);
@@ -45,7 +46,6 @@ function Instancias() {
     }, 3000);
   }
 
-  // Limpa o intervalo se o componente for desmontado (boa prática)
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -53,10 +53,11 @@ function Instancias() {
   }, []);
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Central de Instâncias</h1>
+    <div className="instancias-container">
+      <Link to="/" className="painel-link-voltar">← Voltar ao Painel</Link>
+      <h1 className="instancias-titulo">Central de Instâncias</h1>
 
-      <form onSubmit={handleCriar} style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+      <form onSubmit={handleCriar} className="instancias-form">
         <input
           type="text"
           placeholder="Nome da instância (ex: whatsapp-principal)"
@@ -64,20 +65,22 @@ function Instancias() {
           onChange={(e) => setNomeInstancia(e.target.value)}
           required
         />
-        <button type="submit" disabled={carregando}>
+        <button type="submit" className="instancias-botao" disabled={carregando}>
           {carregando ? 'Criando...' : '+ Criar Instância'}
         </button>
       </form>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="instancias-erro">{erro}</p>}
 
       {qrcode && (
-        <div style={{ marginTop: 20 }}>
-          <p>Status: <strong>{status}</strong></p>
+        <div className="instancias-card-qr">
+          <p className="instancias-status">
+            Status: <strong>{status.replace('_', ' ')}</strong>
+          </p>
           {status !== 'conectado' ? (
-            <img src={qrcode} alt="QR Code do WhatsApp" style={{ width: 250 }} />
+            <img src={qrcode} alt="QR Code do WhatsApp" className="instancias-qrcode" />
           ) : (
-            <p style={{ color: 'green' }}>✅ WhatsApp conectado com sucesso!</p>
+            <p className="instancias-conectado">✅ WhatsApp conectado com sucesso!</p>
           )}
         </div>
       )}
