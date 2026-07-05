@@ -1,0 +1,55 @@
+.disparo-container {
+  padding: 40px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.disparo-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.disparo-info {
+  color: var(--cor-texto-secundario);
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.disparo-campo {
+  margin-bottom: 20px;
+}
+
+.disparo-campo label {
+  display: block;
+  font-size: 13px;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 6px;
+}
+
+.disparo-campo select {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  color: var(--cor-texto);
+  font-size: 14px;
+}
+
+.disparo-botao {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--cor-verde);
+  border: none;
+  border-radius: 6px;
+  color: #0D1117;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.disparo-botao:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

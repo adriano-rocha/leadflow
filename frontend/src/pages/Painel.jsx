@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { buscarLeads } from '../services/leadService';
 import './Painel.css';
 
 function Painel() {
   const { usuario, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [segmento, setSegmento] = useState('');
   const [cidade, setCidade] = useState('');
   const [limite, setLimite] = useState(10);
   const [leads, setLeads] = useState([]);
+  const [selecionados, setSelecionados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
 
@@ -28,6 +30,24 @@ function Painel() {
     } finally {
       setCarregando(false);
     }
+  }
+
+  function alternarSelecao(id) {
+    setSelecionados((atuais) =>
+      atuais.includes(id) ? atuais.filter((item) => item !== id) : [...atuais, id]
+    );
+  }
+
+  function selecionarTodos() {
+    if (selecionados.length === leads.length) {
+      setSelecionados([]);
+    } else {
+      setSelecionados(leads.map((lead) => lead.id));
+    }
+  }
+
+  function irParaDisparo() {
+    navigate('/disparo', { state: { leadsSelecionados: selecionados } });
   }
 
   function badgeStatus(status) {
@@ -80,12 +100,28 @@ function Painel() {
 
       {erro && <p className="painel-erro">{erro}</p>}
 
+      {selecionados.length > 0 && (
+        <div className="painel-acoes-selecao">
+          <span>{selecionados.length} lead(s) selecionado(s)</span>
+          <button onClick={irParaDisparo} className="painel-botao-buscar">
+            Enviar para Workflow →
+          </button>
+        </div>
+      )}
+
       {leads.length === 0 && !carregando ? (
         <div className="painel-vazio">Nenhum lead buscado ainda.</div>
       ) : (
         <table className="tabela-leads">
           <thead>
             <tr>
+              <th>
+                <input
+                  type="checkbox"
+                  checked={leads.length > 0 && selecionados.length === leads.length}
+                  onChange={selecionarTodos}
+                />
+              </th>
               <th>Nome</th>
               <th>Endereço</th>
               <th>Telefone</th>
@@ -96,6 +132,13 @@ function Painel() {
           <tbody>
             {leads.map((lead) => (
               <tr key={lead.id}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selecionados.includes(lead.id)}
+                    onChange={() => alternarSelecao(lead.id)}
+                  />
+                </td>
                 <td>{lead.nome}</td>
                 <td>{lead.endereco}</td>
                 <td>{lead.telefone}</td>
