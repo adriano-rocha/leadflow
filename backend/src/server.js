@@ -4,6 +4,7 @@ const cors = require('cors');
 const usuarioRoutes = require("./routes/usuarioRoutes");
 const loginRoutes = require("./routes/loginRoutes");
 const leadRoutes = require('./routes/leadRoutes');
+const instanciaRoutes = require('./routes/instanciaRoutes');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/usuarios", usuarioRoutes);
 app.use("/login", loginRoutes);
 app.use('/leads', leadRoutes);
+app.use('/instancias', instanciaRoutes);
 
 const autenticar = require("./middlewares/authMiddleware");
 
