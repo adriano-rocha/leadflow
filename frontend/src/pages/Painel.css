@@ -1,0 +1,177 @@
+.painel-container {
+  padding: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.painel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.painel-titulo {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.painel-usuario {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--cor-texto-secundario);
+}
+
+.painel-link {
+  color: var(--cor-azul);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.painel-link:hover {
+  text-decoration: underline;
+}
+
+.painel-botao-sair {
+  background-color: transparent;
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.painel-botao-sair:hover {
+  border-color: var(--cor-vermelho);
+  color: var(--cor-vermelho);
+}
+
+.painel-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.painel-form input,
+.painel-form select {
+  padding: 10px 12px;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  color: var(--cor-texto);
+  font-size: 14px;
+}
+
+.painel-form input:focus,
+.painel-form select:focus {
+  outline: none;
+  border-color: var(--cor-azul);
+}
+
+.painel-form input[type="text"] {
+  flex: 1;
+  min-width: 160px;
+}
+
+.painel-botao-buscar {
+  background-color: var(--cor-azul);
+  border: none;
+  border-radius: 6px;
+  color: #0D1117;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.painel-botao-buscar:hover {
+  opacity: 0.9;
+}
+
+.painel-botao-buscar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.painel-erro {
+  color: var(--cor-vermelho);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.painel-vazio {
+  color: var(--cor-texto-secundario);
+  text-align: center;
+  padding: 40px;
+  border: 1px dashed var(--cor-borda);
+  border-radius: var(--raio-borda);
+}
+
+/* Tabela */
+.tabela-leads {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  overflow: hidden;
+}
+
+.tabela-leads th {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--cor-texto-secundario);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.tabela-leads td {
+  padding: 14px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.tabela-leads tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-leads tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Badges de status */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-novo {
+  background-color: rgba(88, 166, 255, 0.15);
+  color: var(--cor-azul);
+}
+
+.badge-enviado {
+  background-color: rgba(63, 185, 80, 0.15);
+  color: var(--cor-verde);
+}
+
+.badge-erro {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: var(--cor-vermelho);
+}
+
+.badge-sim {
+  color: var(--cor-verde);
+}
+
+.badge-nao {
+  color: var(--cor-vermelho);
+}

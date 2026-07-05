@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { buscarLeads } from '../services/leadService';
-import { Link } from 'react-router-dom';
+import './Painel.css';
 
 function Painel() {
   const { usuario, logout } = useAuth();
@@ -29,18 +30,27 @@ function Painel() {
     }
   }
 
+  function badgeStatus(status) {
+    const classes = {
+      Novo: 'badge-novo',
+      Enviado: 'badge-enviado',
+      Erro: 'badge-erro',
+    };
+    return `badge ${classes[status] || 'badge-novo'}`;
+  }
+
   return (
-    <div style={{ padding: 40 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <h1>Painel LeadFlow</h1>
-        <div>
-          <span>Olá, {usuario?.nome}</span>{' '}
-          <Link to="/instancias">Central de Instâncias</Link>
-          <button onClick={logout}>Sair</button>
+    <div className="painel-container">
+      <div className="painel-header">
+        <h1 className="painel-titulo">Painel LeadFlow</h1>
+        <div className="painel-usuario">
+          <span>Olá, {usuario?.nome}</span>
+          <Link to="/instancias" className="painel-link">Central de Instâncias</Link>
+          <button onClick={logout} className="painel-botao-sair">Sair</button>
         </div>
       </div>
 
-      <form onSubmit={handleBuscar} style={{ marginTop: 20, display: 'flex', gap: 10 }}>
+      <form onSubmit={handleBuscar} className="painel-form">
         <input
           type="text"
           placeholder="Segmento (ex: dentista)"
@@ -62,42 +72,43 @@ function Painel() {
           <option value={50}>50</option>
           <option value={100}>100</option>
         </select>
-        <button type="submit" disabled={carregando}>
+        <button type="submit" className="painel-botao-buscar" disabled={carregando}>
           {carregando ? 'Buscando...' : 'Buscar'}
         </button>
       </form>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="painel-erro">{erro}</p>}
 
-      <table style={{ marginTop: 20, width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={estiloTh}>Nome</th>
-            <th style={estiloTh}>Endereço</th>
-            <th style={estiloTh}>Telefone</th>
-            <th style={estiloTh}>Site próprio?</th>
-            <th style={estiloTh}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leads.map((lead) => (
-            <tr key={lead.id}>
-              <td style={estiloTd}>{lead.nome}</td>
-              <td style={estiloTd}>{lead.endereco}</td>
-              <td style={estiloTd}>{lead.telefone}</td>
-              <td style={estiloTd}>{lead.temSiteProprio ? 'Sim' : 'Não'}</td>
-              <td style={estiloTd}>{lead.status}</td>
+      {leads.length === 0 && !carregando ? (
+        <div className="painel-vazio">Nenhum lead buscado ainda.</div>
+      ) : (
+        <table className="tabela-leads">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Endereço</th>
+              <th>Telefone</th>
+              <th>Site próprio?</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {leads.length === 0 && !carregando && <p>Nenhum lead buscado ainda.</p>}
+          </thead>
+          <tbody>
+            {leads.map((lead) => (
+              <tr key={lead.id}>
+                <td>{lead.nome}</td>
+                <td>{lead.endereco}</td>
+                <td>{lead.telefone}</td>
+                <td className={lead.temSiteProprio ? 'badge-sim' : 'badge-nao'}>
+                  {lead.temSiteProprio ? 'Sim' : 'Não'}
+                </td>
+                <td><span className={badgeStatus(lead.status)}>{lead.status}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
-
-const estiloTh = { border: '1px solid #ccc', padding: 8, textAlign: 'left' };
-const estiloTd = { border: '1px solid #ccc', padding: 8 };
 
 export default Painel;
