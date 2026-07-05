@@ -1,17 +1,18 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { AuthProvider } from './context/AuthProvider';
-import RotaProtegida from './components/RotaProtegida';
-import Login from './pages/Login';
-import Painel from './pages/Painel';
-import Instancias from './pages/Instancias';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./context/AuthProvider";
+import RotaProtegida from "./components/RotaProtegida";
+import Login from "./pages/Login";
+import Painel from "./pages/Painel";
+import Instancias from "./pages/Instancias";
+import Workflow from "./pages/Workflow";
 
 const router = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/',
+    path: "/",
     element: (
       <RotaProtegida>
         <Painel />
@@ -19,10 +20,18 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/instancias',
+    path: "/instancias",
     element: (
       <RotaProtegida>
         <Instancias />
+      </RotaProtegida>
+    ),
+  },
+  {
+    path: "/workflow",
+    element: (
+      <RotaProtegida>
+        <Workflow />
       </RotaProtegida>
     ),
   },

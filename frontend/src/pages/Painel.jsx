@@ -46,6 +46,7 @@ function Painel() {
         <div className="painel-usuario">
           <span>Olá, {usuario?.nome}</span>
           <Link to="/instancias" className="painel-link">Central de Instâncias</Link>
+          <Link to="/workflow" className="painel-link">Workflow</Link>
           <button onClick={logout} className="painel-botao-sair">Sair</button>
         </div>
       </div>

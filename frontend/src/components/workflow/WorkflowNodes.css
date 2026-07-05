@@ -1,0 +1,70 @@
+.node-card {
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 12px;
+  width: 220px;
+  font-size: 13px;
+  color: var(--cor-texto);
+}
+
+.node-header {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.node-inicio {
+  border-color: var(--cor-verde);
+}
+
+.node-mensagem {
+  border-color: var(--cor-azul);
+}
+
+.node-delay {
+  border-color: #D29922;
+}
+
+.node-imagem {
+  border-color: #A371F7;
+}
+
+.node-textarea,
+.node-input {
+  width: 100%;
+  background-color: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  color: var(--cor-texto);
+  padding: 6px 8px;
+  font-size: 12px;
+  margin-bottom: 6px;
+  resize: none;
+}
+
+.node-textarea:focus,
+.node-input:focus {
+  outline: none;
+  border-color: var(--cor-azul);
+}
+
+.node-delay-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.node-delay-input input {
+  width: 60px;
+  background-color: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  color: var(--cor-texto);
+  padding: 4px 8px;
+}
+
+.node-delay-input span {
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+}
