@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { buscarLeads, listarLeads, excluirLeads } from '../services/leadService';
+import exportarCsv from '../utils/exportarCsv';
 import './Painel.css';
 
 function Painel() {
@@ -76,6 +77,16 @@ function Painel() {
     }
   }
 
+  function handleExportarCsv() {
+    if (selecionados.length === 0) {
+      setErro('Selecione ao menos um lead para exportar');
+      return;
+    }
+
+    const leadsParaExportar = leads.filter((lead) => selecionados.includes(lead.id));
+    exportarCsv(leadsParaExportar);
+  }
+
   function badgeStatus(status) {
     const classes = {
       Novo: 'badge-novo',
@@ -131,6 +142,9 @@ function Painel() {
           <span>{selecionados.length} lead(s) selecionado(s)</span>
           <button onClick={irParaDisparo} className="painel-botao-buscar">
             Enviar para Workflow →
+          </button>
+          <button onClick={handleExportarCsv} className="painel-botao-buscar">
+            📄 Exportar CSV
           </button>
           <button onClick={handleExcluir} className="painel-botao-excluir">
             🗑️ Excluir
