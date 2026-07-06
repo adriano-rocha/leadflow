@@ -12,6 +12,8 @@ function Disparo() {
   const [instancias, setInstancias] = useState([]);
   const [workflowEscolhido, setWorkflowEscolhido] = useState('');
   const [instanciaEscolhida, setInstanciaEscolhida] = useState('');
+  const [disparando, setDisparando] = useState(false);
+  const [mensagem, setMensagem] = useState('');
 
   useEffect(() => {
     async function carregarDados() {
@@ -23,6 +25,25 @@ function Disparo() {
     }
     carregarDados();
   }, []);
+
+  async function handleDisparar() {
+    setDisparando(true);
+    setMensagem('');
+
+    try {
+      const resposta = await api.post('/disparo', {
+        leadIds: leadsSelecionados,
+        workflowId: workflowEscolhido,
+        instanciaId: instanciaEscolhida,
+      });
+      setMensagem(`Disparo iniciado! Processando ${resposta.data.total} lead(s)...`);
+    } catch (err) {
+      console.error(err);
+      setMensagem('Erro ao iniciar disparo.');
+    } finally {
+      setDisparando(false);
+    }
+  }
 
   return (
     <div className="disparo-container">
@@ -55,11 +76,14 @@ function Disparo() {
         </select>
       </div>
 
+      {mensagem && <p className="disparo-info">{mensagem}</p>}
+
       <button
         className="disparo-botao"
-        disabled={!workflowEscolhido || !instanciaEscolhida || leadsSelecionados.length === 0}
+        onClick={handleDisparar}
+        disabled={!workflowEscolhido || !instanciaEscolhida || leadsSelecionados.length === 0 || disparando}
       >
-        🚀 Disparar
+        {disparando ? 'Disparando...' : '🚀 Disparar'}
       </button>
     </div>
   );

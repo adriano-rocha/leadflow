@@ -122,6 +122,21 @@
   margin-bottom: 16px;
 }
 
+.painel-botao-excluir {
+  background-color: transparent;
+  border: 1px solid var(--cor-vermelho);
+  color: var(--cor-vermelho);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.painel-botao-excluir:hover {
+  background-color: var(--cor-vermelho);
+  color: white;
+}
+
 /* Tabela */
 .tabela-leads {
   width: 100%;

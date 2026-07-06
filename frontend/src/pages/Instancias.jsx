@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { criarInstancia, verificarStatus } from '../services/instanciaService';
+import { criarInstancia, verificarStatus, excluirInstancia } from '../services/instanciaService';
+import api from '../services/api';
 import './Instancias.css';
 
 function Instancias() {
@@ -9,6 +10,7 @@ function Instancias() {
   const [status, setStatus] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
+  const [instanciasSalvas, setInstanciasSalvas] = useState([]);
 
   const intervalRef = useRef(null);
 
@@ -39,6 +41,7 @@ function Instancias() {
 
         if (resposta.status === 'conectado') {
           clearInterval(intervalRef.current);
+          carregarInstancias();
         }
       } catch (err) {
         console.error(err);
@@ -46,7 +49,29 @@ function Instancias() {
     }, 3000);
   }
 
+  async function carregarInstancias() {
+    try {
+      const resposta = await api.get('/instancias');
+      setInstanciasSalvas(resposta.data.instancias);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleExcluirInstancia(id) {
+    const confirmar = window.confirm('Excluir esta instância?');
+    if (!confirmar) return;
+
+    try {
+      await excluirInstancia(id);
+      carregarInstancias();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(() => {
+    carregarInstancias();
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -84,6 +109,15 @@ function Instancias() {
           )}
         </div>
       )}
+
+      <div className="instancias-lista">
+        {instanciasSalvas.map((inst) => (
+          <div key={inst.id} className="instancias-item">
+            <span>{inst.nomeInstancia} ({inst.status})</span>
+            <button onClick={() => handleExcluirInstancia(inst.id)}>✕</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import StartNode from '../components/workflow/StartNode';
 import MessageNode from '../components/workflow/MessageNode';
 import DelayNode from '../components/workflow/DelayNode';
 import ImageNode from '../components/workflow/ImageNode';
-import { salvarWorkflow, listarWorkflows, buscarWorkflowPorId } from '../services/workflowService';
+import { salvarWorkflow, listarWorkflows, buscarWorkflowPorId, excluirWorkflow } from '../services/workflowService';
 import './Workflow.css';
 
 const nodeTypes = {
@@ -92,6 +92,21 @@ function Workflow() {
     }
   }
 
+  async function handleExcluirWorkflow(id, e) {
+    e.stopPropagation();
+    const confirmar = window.confirm('Excluir este workflow?');
+    if (!confirmar) return;
+
+    try {
+      await excluirWorkflow(id);
+      carregarListaWorkflows();
+      setMensagemStatus('Workflow excluído!');
+    } catch (err) {
+      console.error(err);
+      setMensagemStatus('Erro ao excluir workflow');
+    }
+  }
+
   useEffect(() => {
     carregarListaWorkflows();
   }, []);
@@ -112,12 +127,14 @@ function Workflow() {
         />
         <button onClick={handleSalvar}>💾 Salvar</button>
 
-        <select onChange={(e) => handleCarregar(e.target.value)} defaultValue="">
-          <option value="" disabled>Carregar workflow salvo...</option>
+        <div className="workflow-lista-salvos">
           {workflowsSalvos.map((wf) => (
-            <option key={wf.id} value={wf.id}>{wf.nome}</option>
+            <div key={wf.id} className="workflow-item-salvo" onClick={() => handleCarregar(wf.id)}>
+              <span>{wf.nome}</span>
+              <button onClick={(e) => handleExcluirWorkflow(wf.id, e)}>✕</button>
+            </div>
           ))}
-        </select>
+        </div>
 
         {mensagemStatus && <span style={{ marginLeft: 10 }}>{mensagemStatus}</span>}
       </div>

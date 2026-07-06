@@ -64,6 +64,7 @@
   border-radius: var(--raio-borda);
   padding: 32px;
   text-align: center;
+  margin-bottom: 24px;
 }
 
 .instancias-status {
@@ -88,6 +89,35 @@
   color: var(--cor-verde);
   font-size: 16px;
   font-weight: 600;
+}
+
+.instancias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.instancias-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.instancias-item button {
+  background: none;
+  border: none;
+  color: var(--cor-vermelho);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.instancias-item button:hover {
+  opacity: 0.7;
 }
 
 .painel-link-voltar {

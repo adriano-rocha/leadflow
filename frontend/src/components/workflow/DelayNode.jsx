@@ -1,11 +1,14 @@
-import { Handle, Position, useReactFlow } from '@xyflow/react';
-import './WorkflowNodes.css';
+import { Handle, Position, useReactFlow } from "@xyflow/react";
+import "./WorkflowNodes.css";
 
 function DelayNode({ id, data }) {
-  const { updateNodeData, setNodes } = useReactFlow();
+  const { updateNodeData, setNodes, setEdges } = useReactFlow();
 
   function excluirNo() {
     setNodes((nos) => nos.filter((no) => no.id !== id));
+    setEdges((arestas) =>
+      arestas.filter((aresta) => aresta.source !== id && aresta.target !== id),
+    );
   }
 
   return (
@@ -13,14 +16,18 @@ function DelayNode({ id, data }) {
       <Handle type="target" position={Position.Left} />
       <div className="node-header">
         <span>⏱️ Aguardar</span>
-        <button className="node-excluir" onClick={excluirNo}>✕</button>
+        <button className="node-excluir" onClick={excluirNo}>
+          ✕
+        </button>
       </div>
       <div className="node-delay-input">
         <input
           type="number"
           min="1"
           value={data.segundos || 3}
-          onChange={(e) => updateNodeData(id, { segundos: Number(e.target.value) })}
+          onChange={(e) =>
+            updateNodeData(id, { segundos: Number(e.target.value) })
+          }
         />
         <span>segundos</span>
       </div>

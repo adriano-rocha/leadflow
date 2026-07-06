@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import { buscarLeads } from '../services/leadService';
+import { buscarLeads, listarLeads, excluirLeads } from '../services/leadService';
 import './Painel.css';
 
 function Painel() {
@@ -15,6 +15,18 @@ function Painel() {
   const [selecionados, setSelecionados] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
+
+  useEffect(() => {
+    async function carregarLeadsSalvos() {
+      try {
+        const dados = await listarLeads();
+        setLeads(dados.leads);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    carregarLeadsSalvos();
+  }, []);
 
   async function handleBuscar(e) {
     e.preventDefault();
@@ -48,6 +60,20 @@ function Painel() {
 
   function irParaDisparo() {
     navigate('/disparo', { state: { leadsSelecionados: selecionados } });
+  }
+
+  async function handleExcluir() {
+    const confirmar = window.confirm(`Excluir ${selecionados.length} lead(s) selecionado(s)?`);
+    if (!confirmar) return;
+
+    try {
+      await excluirLeads(selecionados);
+      setLeads((atuais) => atuais.filter((lead) => !selecionados.includes(lead.id)));
+      setSelecionados([]);
+    } catch (err) {
+      console.error(err);
+      setErro('Erro ao excluir leads');
+    }
   }
 
   function badgeStatus(status) {
@@ -105,6 +131,9 @@ function Painel() {
           <span>{selecionados.length} lead(s) selecionado(s)</span>
           <button onClick={irParaDisparo} className="painel-botao-buscar">
             Enviar para Workflow →
+          </button>
+          <button onClick={handleExcluir} className="painel-botao-excluir">
+            🗑️ Excluir
           </button>
         </div>
       )}

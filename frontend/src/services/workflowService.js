@@ -14,3 +14,8 @@ export async function buscarWorkflowPorId(id) {
   const resposta = await api.get(`/workflows/${id}`);
   return resposta.data;
 }
+
+export async function excluirWorkflow(id) {
+  const resposta = await api.delete(`/workflows/${id}`);
+  return resposta.data;
+}
