@@ -61,4 +61,42 @@ async function buscarLeads(req, res) {
   }
 }
 
-module.exports = { buscarLeads };
+async function listarLeads(req, res) {
+  const usuarioId = req.usuarioId;
+
+  try {
+    const leads = await prisma.lead.findMany({
+      where: { usuarioId },
+      orderBy: { criadoEm: 'desc' },
+    });
+    return res.json({ leads });
+  } catch (erro) {
+    console.error(erro);
+    return res.status(500).json({ erro: 'Erro ao listar leads' });
+  }
+}
+
+async function excluirLeads(req, res) {
+  const { leadIds } = req.body;
+  const usuarioId = req.usuarioId;
+
+  if (!leadIds?.length) {
+    return res.status(400).json({ erro: 'leadIds é obrigatório' });
+  }
+
+  try {
+    await prisma.lead.deleteMany({
+      where: {
+        id: { in: leadIds },
+        usuarioId, // garante que só exclui leads do próprio usuário
+      },
+    });
+
+    return res.json({ mensagem: 'Leads excluídos com sucesso' });
+  } catch (erro) {
+    console.error(erro);
+    return res.status(500).json({ erro: 'Erro ao excluir leads' });
+  }
+}
+
+module.exports = { buscarLeads, listarLeads, excluirLeads };

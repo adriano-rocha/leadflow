@@ -17,14 +17,12 @@ async function criarInstancia(req, res) {
   }
 
   try {
-    // 1. Pede pra Evolution API criar a instância
     const respostaEvolution = await evolutionApi.post('/instance/create', {
       instanceName: nomeInstancia,
       qrcode: true,
       integration: 'WHATSAPP-BAILEYS',
     });
 
-    // 2. Salva no nosso banco, guardando o vínculo com o usuário
     const novaInstancia = await prisma.whatsappInstance.create({
       data: {
         nomeInstancia,
@@ -33,7 +31,6 @@ async function criarInstancia(req, res) {
       },
     });
 
-    // 3. Devolve o QR Code (vem dentro da resposta da Evolution)
     return res.status(201).json({
       instancia: novaInstancia,
       qrcode: respostaEvolution.data.qrcode?.base64,
@@ -65,7 +62,6 @@ async function verificarStatus(req, res) {
     const resposta = await evolutionApi.get(`/instance/connectionState/${nomeInstancia}`);
     const estado = resposta.data.instance?.state;
 
-    // Atualiza no nosso banco também
     const statusTraduzido = estado === 'open' ? 'conectado' : 'aguardando_qrcode';
 
     await prisma.whatsappInstance.updateMany({
@@ -80,4 +76,18 @@ async function verificarStatus(req, res) {
   }
 }
 
-module.exports = { criarInstancia, listarInstancias, verificarStatus };
+async function excluirInstancia(req, res) {
+  const { id } = req.params;
+
+  try {
+    await prisma.whatsappInstance.delete({
+      where: { id: Number(id) },
+    });
+    return res.json({ mensagem: 'Instância excluída com sucesso' });
+  } catch (erro) {
+    console.error(erro);
+    return res.status(500).json({ erro: 'Erro ao excluir instância' });
+  }
+}
+
+module.exports = { criarInstancia, listarInstancias, verificarStatus, excluirInstancia };
