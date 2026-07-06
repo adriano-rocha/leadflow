@@ -59,7 +59,7 @@ def buscar_no_maps(segmento, cidade, limite=5):
         pagina = contexto.new_page()
 
         # Correção da URL adicionando a barra após o domínio do Google Maps
-        url_busca = f"https://www.google.com/maps/search/{quote(query)}"
+        url_busca = f"https://www.google.com/maps/search/{quote(query)}?hl=pt-BR"
         pagina.goto(url_busca)
         pagina.wait_for_selector('div[role="feed"]', timeout=15000)
 
@@ -88,7 +88,7 @@ def buscar_no_maps(segmento, cidade, limite=5):
 
                 nome = pagina.locator('h1').last.inner_text().strip()
 
-                if not nome or "Patrocinado" in nome:
+                if not nome or "Patrocinado" in nome or "Sponsored" in nome:
                     print(f"[{i+1}] Ignorado (anúncio patrocinado ou nome vazio)")
                     continue
 
