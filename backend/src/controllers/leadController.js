@@ -11,7 +11,8 @@ async function buscarLeads(req, res) {
 
   try {
     // 1. Chama a API do scraper Python
-    const respostaScraper = await axios.post('http://localhost:8000/buscar', {
+     const scraperUrl = process.env.SCRAPER_URL || 'http://localhost:8000';
+    const respostaScraper = await axios.post(`${scraperUrl}/buscar`, {
       segmento,
       cidade,
       limite: limite || 10,
