@@ -5,8 +5,8 @@ export async function buscarLeads(segmento, cidade, limite) {
   return resposta.data;
 }
 
-export async function listarLeads() {
-  const resposta = await api.get('/leads');
+export async function listarLeads(filtros = {}) {
+  const resposta = await api.get('/leads', { params: filtros });
   return resposta.data;
 }
 

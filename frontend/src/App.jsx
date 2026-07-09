@@ -6,6 +6,7 @@ import Painel from "./pages/Painel";
 import Instancias from "./pages/Instancias";
 import Workflow from "./pages/Workflow";
 import Disparo from "./pages/Disparo";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
+    element: (
+      <RotaProtegida>
+        <Dashboard />
+      </RotaProtegida>
+    ),
+  },
+  {
+    path: "/painel",
     element: (
       <RotaProtegida>
         <Painel />

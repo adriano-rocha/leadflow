@@ -53,3 +53,57 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.dashboard-card-clicavel {
+  cursor: pointer;
+}
+
+.dashboard-barras {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dashboard-barra-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.dashboard-barra-label {
+  width: 110px;
+  font-size: 13px;
+  color: #cbd5e1;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-barra-trilho {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dashboard-barra-preenchida {
+  height: 100%;
+  background: linear-gradient(90deg, #60a5fa, #34d399);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.dashboard-barra-valor {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e5e7eb;
+  width: 28px;
+  text-align: right;
+}
+
+.celula-nota {
+  white-space: nowrap;
+}

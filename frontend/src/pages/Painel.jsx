@@ -1,21 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
-import { buscarLeads, listarLeads, excluirLeads } from '../services/leadService';
-import exportarCsv from '../utils/exportarCsv';
-import './Painel.css';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+import {
+  buscarLeads,
+  listarLeads,
+  excluirLeads,
+} from "../services/leadService";
+import exportarCsv from "../utils/exportarCsv";
+import "./Painel.css";
 
 function Painel() {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [segmento, setSegmento] = useState('');
-  const [cidade, setCidade] = useState('');
+  const [segmento, setSegmento] = useState("");
+  const [cidade, setCidade] = useState("");
   const [limite, setLimite] = useState(10);
   const [leads, setLeads] = useState([]);
   const [selecionados, setSelecionados] = useState([]);
   const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState('');
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
     async function carregarLeadsSalvos() {
@@ -31,7 +35,7 @@ function Painel() {
 
   async function handleBuscar(e) {
     e.preventDefault();
-    setErro('');
+    setErro("");
     setCarregando(true);
 
     try {
@@ -39,7 +43,7 @@ function Painel() {
       setLeads((leadsAtuais) => [...resultado.leads, ...leadsAtuais]);
     } catch (err) {
       console.error(err);
-      setErro('Erro ao buscar leads. Tente novamente.');
+      setErro("Erro ao buscar leads. Tente novamente.");
     } finally {
       setCarregando(false);
     }
@@ -47,7 +51,9 @@ function Painel() {
 
   function alternarSelecao(id) {
     setSelecionados((atuais) =>
-      atuais.includes(id) ? atuais.filter((item) => item !== id) : [...atuais, id]
+      atuais.includes(id)
+        ? atuais.filter((item) => item !== id)
+        : [...atuais, id],
     );
   }
 
@@ -60,40 +66,46 @@ function Painel() {
   }
 
   function irParaDisparo() {
-    navigate('/disparo', { state: { leadsSelecionados: selecionados } });
+    navigate("/disparo", { state: { leadsSelecionados: selecionados } });
   }
 
   async function handleExcluir() {
-    const confirmar = window.confirm(`Excluir ${selecionados.length} lead(s) selecionado(s)?`);
+    const confirmar = window.confirm(
+      `Excluir ${selecionados.length} lead(s) selecionado(s)?`,
+    );
     if (!confirmar) return;
 
     try {
       await excluirLeads(selecionados);
-      setLeads((atuais) => atuais.filter((lead) => !selecionados.includes(lead.id)));
+      setLeads((atuais) =>
+        atuais.filter((lead) => !selecionados.includes(lead.id)),
+      );
       setSelecionados([]);
     } catch (err) {
       console.error(err);
-      setErro('Erro ao excluir leads');
+      setErro("Erro ao excluir leads");
     }
   }
 
   function handleExportarCsv() {
     if (selecionados.length === 0) {
-      setErro('Selecione ao menos um lead para exportar');
+      setErro("Selecione ao menos um lead para exportar");
       return;
     }
 
-    const leadsParaExportar = leads.filter((lead) => selecionados.includes(lead.id));
+    const leadsParaExportar = leads.filter((lead) =>
+      selecionados.includes(lead.id),
+    );
     exportarCsv(leadsParaExportar);
   }
 
   function badgeStatus(status) {
     const classes = {
-      Novo: 'badge-novo',
-      Enviado: 'badge-enviado',
-      Erro: 'badge-erro',
+      Novo: "badge-novo",
+      Enviado: "badge-enviado",
+      Erro: "badge-erro",
     };
-    return `badge ${classes[status] || 'badge-novo'}`;
+    return `badge ${classes[status] || "badge-novo"}`;
   }
 
   return (
@@ -102,9 +114,18 @@ function Painel() {
         <h1 className="painel-titulo">Painel LeadFlow</h1>
         <div className="painel-usuario">
           <span>Olá, {usuario?.nome}</span>
-          <Link to="/instancias" className="painel-link">Central de Instâncias</Link>
-          <Link to="/workflow" className="painel-link">Workflow</Link>
-          <button onClick={logout} className="painel-botao-sair">Sair</button>
+          <Link to="/" className="painel-link">
+            Dashboard
+          </Link>
+          <Link to="/instancias" className="painel-link">
+            Central de Instâncias
+          </Link>
+          <Link to="/workflow" className="painel-link">
+            Workflow
+          </Link>
+          <button onClick={logout} className="painel-botao-sair">
+            Sair
+          </button>
         </div>
       </div>
 
@@ -130,8 +151,12 @@ function Painel() {
           <option value={50}>50</option>
           <option value={100}>100</option>
         </select>
-        <button type="submit" className="painel-botao-buscar" disabled={carregando}>
-          {carregando ? 'Buscando...' : 'Buscar'}
+        <button
+          type="submit"
+          className="painel-botao-buscar"
+          disabled={carregando}
+        >
+          {carregando ? "Buscando..." : "Buscar"}
         </button>
       </form>
 
@@ -161,7 +186,9 @@ function Painel() {
               <th>
                 <input
                   type="checkbox"
-                  checked={leads.length > 0 && selecionados.length === leads.length}
+                  checked={
+                    leads.length > 0 && selecionados.length === leads.length
+                  }
                   onChange={selecionarTodos}
                 />
               </th>
@@ -169,6 +196,7 @@ function Painel() {
               <th>Endereço</th>
               <th>Telefone</th>
               <th>Site próprio?</th>
+              <th>Nota</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -185,10 +213,16 @@ function Painel() {
                 <td>{lead.nome}</td>
                 <td>{lead.endereco}</td>
                 <td>{lead.telefone}</td>
-                <td className={lead.temSiteProprio ? 'badge-sim' : 'badge-nao'}>
-                  {lead.temSiteProprio ? 'Sim' : 'Não'}
+                <td className={lead.temSiteProprio ? "badge-sim" : "badge-nao"}>
+                  {lead.temSiteProprio ? "Sim" : "Não"}
                 </td>
-                <td><span className={badgeStatus(lead.status)}>{lead.status}</span></td>
+                <td className="celula-nota">⭐ {lead.avaliacao}</td>
+
+                <td>
+                  <span className={badgeStatus(lead.status)}>
+                    {lead.status}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>

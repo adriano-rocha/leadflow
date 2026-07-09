@@ -79,7 +79,7 @@ function Instancias() {
 
   return (
     <div className="instancias-container">
-      <Link to="/" className="painel-link-voltar">← Voltar ao Painel</Link>
+      <Link to="/painel" className="painel-link-voltar">← Voltar ao Painel</Link>
       <h1 className="instancias-titulo">Central de Instâncias</h1>
 
       <form onSubmit={handleCriar} className="instancias-form">

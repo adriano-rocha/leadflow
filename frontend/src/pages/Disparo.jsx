@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { listarWorkflows } from '../services/workflowService';
-import api from '../services/api';
-import './Disparo.css';
+import { useState, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
+import { listarWorkflows } from "../services/workflowService";
+import api from "../services/api";
+import "./Disparo.css";
 
 function Disparo() {
   const location = useLocation();
@@ -10,17 +10,17 @@ function Disparo() {
 
   const [workflows, setWorkflows] = useState([]);
   const [instancias, setInstancias] = useState([]);
-  const [workflowEscolhido, setWorkflowEscolhido] = useState('');
-  const [instanciaEscolhida, setInstanciaEscolhida] = useState('');
+  const [workflowEscolhido, setWorkflowEscolhido] = useState("");
+  const [instanciaEscolhida, setInstanciaEscolhida] = useState("");
   const [disparando, setDisparando] = useState(false);
-  const [mensagem, setMensagem] = useState('');
+  const [mensagem, setMensagem] = useState("");
 
   useEffect(() => {
     async function carregarDados() {
       const dadosWorkflows = await listarWorkflows();
       setWorkflows(dadosWorkflows.workflows);
 
-      const respostaInstancias = await api.get('/instancias');
+      const respostaInstancias = await api.get("/instancias");
       setInstancias(respostaInstancias.data.instancias);
     }
     carregarDados();
@@ -28,18 +28,20 @@ function Disparo() {
 
   async function handleDisparar() {
     setDisparando(true);
-    setMensagem('');
+    setMensagem("");
 
     try {
-      const resposta = await api.post('/disparo', {
+      const resposta = await api.post("/disparo", {
         leadIds: leadsSelecionados,
         workflowId: workflowEscolhido,
         instanciaId: instanciaEscolhida,
       });
-      setMensagem(`Disparo iniciado! Processando ${resposta.data.total} lead(s)...`);
+      setMensagem(
+        `Disparo iniciado! Processando ${resposta.data.total} lead(s)...`,
+      );
     } catch (err) {
       console.error(err);
-      setMensagem('Erro ao iniciar disparo.');
+      setMensagem("Erro ao iniciar disparo.");
     } finally {
       setDisparando(false);
     }
@@ -47,7 +49,9 @@ function Disparo() {
 
   return (
     <div className="disparo-container">
-      <Link to="/" className="painel-link-voltar">← Voltar ao Painel</Link>
+      <Link to="/painel" className="painel-link-voltar">
+        ← Voltar ao Painel
+      </Link>
       <h1 className="disparo-titulo">Disparar Automação</h1>
 
       <p className="disparo-info">
@@ -56,17 +60,25 @@ function Disparo() {
 
       <div className="disparo-campo">
         <label>Workflow</label>
-        <select value={workflowEscolhido} onChange={(e) => setWorkflowEscolhido(e.target.value)}>
+        <select
+          value={workflowEscolhido}
+          onChange={(e) => setWorkflowEscolhido(e.target.value)}
+        >
           <option value="">Selecione um workflow...</option>
           {workflows.map((wf) => (
-            <option key={wf.id} value={wf.id}>{wf.nome}</option>
+            <option key={wf.id} value={wf.id}>
+              {wf.nome}
+            </option>
           ))}
         </select>
       </div>
 
       <div className="disparo-campo">
         <label>Instância do WhatsApp</label>
-        <select value={instanciaEscolhida} onChange={(e) => setInstanciaEscolhida(e.target.value)}>
+        <select
+          value={instanciaEscolhida}
+          onChange={(e) => setInstanciaEscolhida(e.target.value)}
+        >
           <option value="">Selecione uma instância...</option>
           {instancias.map((inst) => (
             <option key={inst.id} value={inst.id}>
@@ -81,9 +93,14 @@ function Disparo() {
       <button
         className="disparo-botao"
         onClick={handleDisparar}
-        disabled={!workflowEscolhido || !instanciaEscolhida || leadsSelecionados.length === 0 || disparando}
+        disabled={
+          !workflowEscolhido ||
+          !instanciaEscolhida ||
+          leadsSelecionados.length === 0 ||
+          disparando
+        }
       >
-        {disparando ? 'Disparando...' : '🚀 Disparar'}
+        {disparando ? "Disparando..." : "🚀 Disparar"}
       </button>
     </div>
   );

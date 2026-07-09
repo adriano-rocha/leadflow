@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
-import './Login.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+import "./Login.css";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
   const { login } = useAuth();
@@ -14,7 +14,7 @@ function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setErro('');
+    setErro("");
     setCarregando(true);
 
     try {
@@ -22,7 +22,7 @@ function Login() {
       navigate('/');
     } catch (err) {
       console.error(err);
-      setErro('Email ou senha inválidos');
+      setErro("Email ou senha inválidos");
     } finally {
       setCarregando(false);
     }
@@ -58,7 +58,7 @@ function Login() {
           {erro && <p className="login-erro">{erro}</p>}
 
           <button type="submit" className="login-botao" disabled={carregando}>
-            {carregando ? 'Entrando...' : 'Entrar'}
+            {carregando ? "Entrando..." : "Entrar"}
           </button>
         </form>
       </div>
