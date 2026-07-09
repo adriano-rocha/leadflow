@@ -24,6 +24,7 @@ services:
       - DATABASE_PROVIDER=postgresql
       - DATABASE_CONNECTION_URI=postgresql://evolution:evolution123@evolution-postgres:5432/evolution
       - DATABASE_SAVE_DATA_INSTANCE=true
+      - CACHE_REDIS_ENABLED=false
       - CORS_ORIGIN=*
     volumes:
       - evolution_instances:/evolution/instances
