@@ -27,25 +27,17 @@ async function enviarImagem(nomeInstancia, telefone, urlImagem, legenda) {
 }
 
 async function executarWorkflowParaLead(nodes, edges, nomeInstancia, telefone) {
-  // Monta um "mapa" pra saber qual nó vem depois de qual
   const noInicial = nodes.find((n) => n.type === "inicio");
   let noAtualId = noInicial.id;
 
-  console.log("Nós do workflow:", JSON.stringify(nodes));
-  console.log("Conexões do workflow:", JSON.stringify(edges));
-
   while (true) {
     const aresta = edges.find((e) => e.source === noAtualId);
-    if (!aresta) break; // não tem próximo nó, terminou o fluxo
+    if (!aresta) break;
 
     const proximoNo = nodes.find((n) => n.id === aresta.target);
     if (!proximoNo) break;
 
     if (proximoNo.type === "mensagem") {
-      console.log(
-        "Texto da mensagem a enviar:",
-        JSON.stringify(proximoNo.data.texto),
-      );
       await enviarMensagemTexto(nomeInstancia, telefone, proximoNo.data.texto);
     }
 
@@ -65,6 +57,18 @@ async function executarWorkflowParaLead(nodes, edges, nomeInstancia, telefone) {
 
     noAtualId = proximoNo.id;
   }
+}
+
+/**
+ * Gera um delay aleatório entre um mínimo e um máximo (em milissegundos).
+ * Usado entre o disparo de um lead e outro, para evitar um padrão de
+ * tempo sempre idêntico (comportamento que sistemas anti-spam identificam
+ * facilmente).
+ */
+function delayAleatorioEntreLeads() {
+  const MIN_MS = 4000;
+  const MAX_MS = 9000;
+  return Math.floor(Math.random() * (MAX_MS - MIN_MS + 1)) + MIN_MS;
 }
 
 async function dispararAutomacao(req, res) {
@@ -93,7 +97,6 @@ async function dispararAutomacao(req, res) {
         .json({ erro: "Workflow ou instância não encontrados" });
     }
 
-    // Responde imediatamente pro frontend, e continua processando em segundo plano
     res.status(202).json({ mensagem: "Disparo iniciado", total: leads.length });
 
     const { nodes, edges } = workflow.estruturaJson;
@@ -101,8 +104,6 @@ async function dispararAutomacao(req, res) {
     for (const lead of leads) {
       try {
         const telefoneFormatado = formatarTelefone(lead.telefone);
-        console.log("Telefone formatado:", telefoneFormatado);
-        console.log("Nome da instância usada:", instancia.nomeInstancia);
 
         await executarWorkflowParaLead(
           nodes,
@@ -128,14 +129,15 @@ async function dispararAutomacao(req, res) {
         });
       }
 
-      // Delay de segurança entre um lead e outro
-      await sleep(5000);
+      // Delay variável de segurança entre um lead e outro (4 a 9 segundos)
+      const delayMs = delayAleatorioEntreLeads();
+      console.log(`Aguardando ${(delayMs / 1000).toFixed(1)}s antes do próximo lead...`);
+      await sleep(delayMs);
     }
 
     console.log("Disparo finalizado para todos os leads.");
   } catch (erro) {
     console.error(erro);
-    // Como já respondemos antes, só logamos o erro geral aqui
   }
 }
 

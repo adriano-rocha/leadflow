@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Lead" ADD COLUMN     "avaliacao" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ADD COLUMN     "quantidadeAvaliacoes" INTEGER NOT NULL DEFAULT 0;
