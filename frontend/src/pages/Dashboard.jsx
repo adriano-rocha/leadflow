@@ -50,6 +50,7 @@ function Dashboard() {
   }
 
   const maiorSegmento = dados.porSegmento[0]?.total || 1;
+  const maiorCidade = dados.porCidade[0]?.total || 1;
   const totalGeral = dados.totalLeads || 1;
   const percentEnviado = Math.round(
     (dados.porStatus.Enviado / totalGeral) * 100,
@@ -179,6 +180,51 @@ function Dashboard() {
                         className="dashboard-barra-preenchida"
                         style={{
                           width: `${(item.total / maiorSegmento) * 100}%`,
+                          animationDelay: `${index * 80}ms`,
+                        }}
+                      />
+                    </div>
+                    <span className="dashboard-barra-valor">
+                      {item.total}{" "}
+                      <span className="dashboard-barra-percentual">
+                        ({percentual}%)
+                      </span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Top cidades — barra horizontal, mesmo padrão do bloco de segmentos */}
+        <div className="dashboard-bloco">
+          <h2>Top cidades</h2>
+          {dados.porCidade.length === 0 ? (
+            <p className="dashboard-vazio-texto">Nenhum lead ainda.</p>
+          ) : (
+            <div className="dashboard-barras">
+              {dados.porCidade.map((item, index) => {
+                const percentual = Math.round((item.total / totalGeral) * 100);
+                return (
+                  <div
+                    key={item.cidade}
+                    className="dashboard-barra-item dashboard-lista-clicavel"
+                    onClick={() =>
+                      setModal({
+                        titulo: item.cidade,
+                        filtro: { cidade: item.cidade },
+                      })
+                    }
+                  >
+                    <span className="dashboard-barra-label">
+                      {item.cidade}
+                    </span>
+                    <div className="dashboard-barra-trilho">
+                      <div
+                        className="dashboard-barra-preenchida"
+                        style={{
+                          width: `${(item.total / maiorCidade) * 100}%`,
                           animationDelay: `${index * 80}ms`,
                         }}
                       />
