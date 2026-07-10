@@ -68,12 +68,13 @@ async function buscarLeads(req, res) {
 
 async function listarLeads(req, res) {
   const usuarioId = req.usuarioId;
-  const { segmento, status } = req.query;
+  const { segmento, status, cidade } = req.query;
 
   try {
     const where = { usuarioId };
     if (segmento) where.segmento = segmento;
     if (status) where.status = status;
+    if (cidade) where.cidade = cidade;
 
     const leads = await prisma.lead.findMany({
       where,
