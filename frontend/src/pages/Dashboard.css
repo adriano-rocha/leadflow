@@ -271,3 +271,20 @@
   text-align: center;
   margin-top: 40px;
 }
+
+.dashboard-botao-disparo {
+  background: rgba(57, 255, 136, 0.12);
+  border: none;
+  color: #39ff88;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.dashboard-botao-disparo:hover {
+  background: rgba(57, 255, 136, 0.25);
+  transform: scale(1.05);
+}

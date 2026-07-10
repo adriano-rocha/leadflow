@@ -68,3 +68,49 @@
   background: #f87171;
   color: #131a2b;
 }
+
+.modal-acoes-selecao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(57, 255, 136, 0.06);
+  border: 1px solid rgba(57, 255, 136, 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #cbd5e1;
+  flex-wrap: wrap;
+}
+
+.modal-botao-acao {
+  background: #39ff88;
+  color: #0b0f1a;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.modal-botao-acao:hover {
+  opacity: 0.85;
+}
+
+.modal-botao-excluir-lote {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal-botao-excluir-lote:hover {
+  background: rgba(248, 113, 113, 0.25);
+}

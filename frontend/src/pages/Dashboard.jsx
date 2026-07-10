@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { obterEstatisticas } from "../services/dashboardService";
 import ModalLeadsFiltro from "../components/ModalLeadsFiltro";
 import "./Dashboard.css";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [dados, setDados] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
@@ -17,6 +18,10 @@ function Dashboard() {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  function irParaDisparoRapido(lead) {
+    navigate('/disparo', { state: { leadsSelecionados: [lead.id] } });
   }
 
   useEffect(() => {
@@ -259,6 +264,7 @@ function Dashboard() {
                 <th>Cidade</th>
                 <th>Avaliação</th>
                 <th>Telefone</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -269,6 +275,15 @@ function Dashboard() {
                   <td>{lead.cidade}</td>
                   <td className="celula-nota">⭐ {lead.avaliacao}</td>
                   <td>{lead.telefone}</td>
+                  <td>
+                    <button
+                      className="dashboard-botao-disparo"
+                      onClick={() => irParaDisparoRapido(lead)}
+                      title="Enviar para Workflow"
+                    >
+                      📤
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
