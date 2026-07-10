@@ -281,7 +281,7 @@ function Dashboard() {
                       onClick={() => irParaDisparoRapido(lead)}
                       title="Enviar para Workflow"
                     >
-                      📤
+                      →
                     </button>
                   </td>
                 </tr>

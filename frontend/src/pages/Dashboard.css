@@ -273,18 +273,20 @@
 }
 
 .dashboard-botao-disparo {
-  background: rgba(57, 255, 136, 0.12);
+  background: rgba(114, 250, 96, 0.12);
   border: none;
-  color: #39ff88;
+  color: #47e60d;
   width: 30px;
   height: 30px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
   transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .dashboard-botao-disparo:hover {
-  background: rgba(57, 255, 136, 0.25);
-  transform: scale(1.05);
+  background: rgb(30, 187, 9);
+  transform: translateX(2px);
 }
