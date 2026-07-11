@@ -1,5 +1,6 @@
 const axios = require("axios");
 const prisma = require("../prismaClient");
+const extrairEstado = require("../utils/extrairEstado");
 
 async function buscarLeads(req, res) {
   const { segmento, cidade, limite } = req.body;
@@ -68,7 +69,7 @@ async function buscarLeads(req, res) {
 
 async function listarLeads(req, res) {
   const usuarioId = req.usuarioId;
-  const { segmento, status, cidade } = req.query;
+  const { segmento, status, cidade, estado } = req.query;
 
   try {
     const where = { usuarioId };
@@ -76,10 +77,15 @@ async function listarLeads(req, res) {
     if (status) where.status = status;
     if (cidade) where.cidade = cidade;
 
-    const leads = await prisma.lead.findMany({
+    let leads = await prisma.lead.findMany({
       where,
       orderBy: { avaliacao: "asc" },
     });
+
+    if (estado) {
+      leads = leads.filter((lead) => extrairEstado(lead.endereco) === estado);
+    }
+
     return res.json({ leads });
   } catch (erro) {
     console.error(erro);

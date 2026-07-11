@@ -1,4 +1,5 @@
 const prisma = require('../prismaClient');
+const extrairEstado = require('../utils/extrairEstado');
 
 async function obterEstatisticas(req, res) {
   const usuarioId = req.usuarioId;
@@ -41,20 +42,25 @@ async function obterEstatisticas(req, res) {
       .map(([cidade, total]) => ({ cidade, total }))
       .sort((a, b) => b.total - a.total);
 
+    // 3.5. Contagem por estado (extraído do endereço)
+    const porEstadoMap = {};
+    leads.forEach((lead) => {
+      const uf = extrairEstado(lead.endereco);
+      porEstadoMap[uf] = (porEstadoMap[uf] || 0) + 1;
+    });
+    const porEstado = Object.entries(porEstadoMap)
+      .map(([estado, total]) => ({ estado, total }))
+      .sort((a, b) => b.total - a.total);
+
     // 4. Top 10 leads mais prioritários (nota baixa + poucas avaliações = mais urgente)
     //    Só considera leads que têm avaliação registrada e ainda não foram trabalhados (status Novo)
     const leadsComAvaliacao = leads.filter(
       (lead) => lead.avaliacao !== null && lead.status === 'Novo'
     );
 
-    function calcularPontuacao(lead) {
-      const quantidade = lead.quantidadeAvaliacoes || 0;
-      return lead.avaliacao * Math.log(quantidade + 1);
-    }
-
     const topPrioritarios = leadsComAvaliacao
-      .map((lead) => ({ ...lead, pontuacao: calcularPontuacao(lead) }))
-      .sort((a, b) => a.pontuacao - b.pontuacao)
+      .slice()
+      .sort((a, b) => a.avaliacao - b.avaliacao)
       .slice(0, 10);
 
     // 5. Totais gerais
@@ -67,6 +73,7 @@ async function obterEstatisticas(req, res) {
       porStatus,
       porSegmento,
       porCidade,
+      porEstado,
       topPrioritarios,
     });
   } catch (erro) {
