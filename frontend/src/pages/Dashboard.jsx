@@ -1,15 +1,28 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { obterEstatisticas } from "../services/dashboardService";
 import ModalLeadsFiltro from "../components/ModalLeadsFiltro";
 import "./Dashboard.css";
+
+const CORES_PIZZA = [
+  "#39ff88",
+  "#60a5fa",
+  "#34d399",
+  "#fbbf24",
+  "#a78bfa",
+  "#f87171",
+  "#22d3ee",
+  "#f472b6",
+];
 
 function Dashboard() {
   const navigate = useNavigate();
   const [dados, setDados] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
-  const [modal, setModal] = useState(null); // { titulo, filtro } | null
+  const [modal, setModal] = useState(null);
 
   async function recarregarEstatisticas() {
     try {
@@ -21,7 +34,7 @@ function Dashboard() {
   }
 
   function irParaDisparoRapido(lead) {
-    navigate('/disparo', { state: { leadsSelecionados: [lead.id] } });
+    navigate("/disparo", { state: { leadsSelecionados: [lead.id] } });
   }
 
   useEffect(() => {
@@ -55,7 +68,6 @@ function Dashboard() {
   }
 
   const maiorSegmento = dados.porSegmento[0]?.total || 1;
-  const maiorCidade = dados.porCidade[0]?.total || 1;
   const totalGeral = dados.totalLeads || 1;
   const percentEnviado = Math.round(
     (dados.porStatus.Enviado / totalGeral) * 100,
@@ -63,62 +75,83 @@ function Dashboard() {
   const percentNovo = Math.round((dados.porStatus.Novo / totalGeral) * 100);
   const qtdNichos = dados.porSegmento.length;
 
+  const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    visible: (i = 0) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.06, duration: 0.4, ease: "easeOut" },
+    }),
+  };
+
   return (
     <div className="dashboard-container">
       <Link to="/painel" className="painel-link-voltar">
         ← Voltar ao Painel
       </Link>
-      <h1 className="dashboard-titulo">LeadFlow</h1>
+
+      <motion.h1
+        className="dashboard-titulo"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        LeadFlow
+      </motion.h1>
 
       {/* Cards de totais */}
       <div className="dashboard-cards">
-        <div
-          className="dashboard-card dashboard-card-clicavel"
-          onClick={() => setModal({ titulo: "Todos os leads", filtro: {} })}
-        >
-          <span className="dashboard-card-numero">{dados.totalLeads}</span>
-          <span className="dashboard-card-label">Total de leads</span>
-          <span className="dashboard-card-contexto">
-            {qtdNichos} {qtdNichos === 1 ? "nicho" : "nichos"} diferentes
-          </span>
-        </div>
-        <div
-          className="dashboard-card dashboard-card-clicavel"
-          onClick={() =>
-            setModal({
-              titulo: "Leads enviados",
-              filtro: { status: "Enviado" },
-            })
-          }
-        >
-          <span className="dashboard-card-numero">
-            {dados.porStatus.Enviado}
-          </span>
-          <span className="dashboard-card-label">Mensagens enviadas</span>
-          <span className="dashboard-card-contexto">
-            {percentEnviado}% do total
-          </span>
-        </div>
-        <div
-          className="dashboard-card dashboard-card-clicavel"
-          onClick={() =>
-            setModal({
-              titulo: "Leads aguardando contato",
-              filtro: { status: "Novo" },
-            })
-          }
-        >
-          <span className="dashboard-card-numero">{dados.porStatus.Novo}</span>
-          <span className="dashboard-card-label">Aguardando contato</span>
-          <span className="dashboard-card-contexto">
-            {percentNovo}% ainda sem ação
-          </span>
-        </div>
+        {[
+          {
+            titulo: "Todos os leads",
+            filtro: {},
+            numero: dados.totalLeads,
+            label: "Total de leads",
+            contexto: `${qtdNichos} ${qtdNichos === 1 ? "nicho" : "nichos"} diferentes`,
+          },
+          {
+            titulo: "Leads enviados",
+            filtro: { status: "Enviado" },
+            numero: dados.porStatus.Enviado,
+            label: "Mensagens enviadas",
+            contexto: `${percentEnviado}% do total`,
+          },
+          {
+            titulo: "Leads aguardando contato",
+            filtro: { status: "Novo" },
+            numero: dados.porStatus.Novo,
+            label: "Aguardando contato",
+            contexto: `${percentNovo}% ainda sem ação`,
+          },
+        ].map((card, i) => (
+          <motion.div
+            key={card.titulo}
+            className="dashboard-card dashboard-card-clicavel"
+            onClick={() =>
+              setModal({ titulo: card.titulo, filtro: card.filtro })
+            }
+            custom={i}
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+          >
+            <span className="dashboard-card-numero">{card.numero}</span>
+            <span className="dashboard-card-label">{card.label}</span>
+            <span className="dashboard-card-contexto">{card.contexto}</span>
+          </motion.div>
+        ))}
       </div>
 
       <div className="dashboard-grid">
         {/* Funil de status */}
-        <div className="dashboard-bloco">
+        <motion.div
+          className="dashboard-bloco"
+          custom={0}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
           <h2>Funil de status</h2>
           <div className="dashboard-funil">
             <div
@@ -155,10 +188,16 @@ function Dashboard() {
               <span>{dados.porStatus.Erro}</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Leads mais encontrados — barra horizontal */}
-        <div className="dashboard-bloco">
+        <motion.div
+          className="dashboard-bloco"
+          custom={1}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
           <h2>Leads mais encontrados</h2>
           {dados.porSegmento.length === 0 ? (
             <p className="dashboard-vazio-texto">Nenhum lead ainda.</p>
@@ -200,56 +239,106 @@ function Dashboard() {
               })}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        {/* Top cidades — barra horizontal, mesmo padrão do bloco de segmentos */}
-        <div className="dashboard-bloco">
-          <h2>Top cidades</h2>
-          {dados.porCidade.length === 0 ? (
+        {/* Leads por estado — donut com legenda lateral */}
+        <motion.div
+          className="dashboard-bloco"
+          custom={2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <h2>Leads por estado</h2>
+          {dados.porEstado.length === 0 ? (
             <p className="dashboard-vazio-texto">Nenhum lead ainda.</p>
           ) : (
-            <div className="dashboard-barras">
-              {dados.porCidade.map((item, index) => {
-                const percentual = Math.round((item.total / totalGeral) * 100);
-                return (
-                  <div
-                    key={item.cidade}
-                    className="dashboard-barra-item dashboard-lista-clicavel"
-                    onClick={() =>
+            <div className="dashboard-donut-wrapper">
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie
+                    data={dados.porEstado}
+                    dataKey="total"
+                    nameKey="estado"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    onClick={(entry) =>
                       setModal({
-                        titulo: item.cidade,
-                        filtro: { cidade: item.cidade },
+                        titulo: `Leads em ${entry.estado}`,
+                        filtro: { estado: entry.estado },
                       })
                     }
                   >
-                    <span className="dashboard-barra-label">
-                      {item.cidade}
-                    </span>
-                    <div className="dashboard-barra-trilho">
-                      <div
-                        className="dashboard-barra-preenchida"
+                    {dados.porEstado.map((entry, index) => (
+                      <Cell
+                        key={entry.estado}
+                        fill={CORES_PIZZA[index % CORES_PIZZA.length]}
+                        cursor="pointer"
+                        stroke="none"
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      background: "#131a2b",
+                      border: "1px solid rgba(57,255,136,0.35)",
+                      borderRadius: 8,
+                      color: "#e5e7eb",
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+
+              <div className="dashboard-donut-legenda">
+                {dados.porEstado.map((item, index) => {
+                  const percentual = Math.round(
+                    (item.total / totalGeral) * 100,
+                  );
+                  return (
+                    <div
+                      key={item.estado}
+                      className="dashboard-legenda-item dashboard-lista-clicavel"
+                      onClick={() =>
+                        setModal({
+                          titulo: `Leads em ${item.estado}`,
+                          filtro: { estado: item.estado },
+                        })
+                      }
+                    >
+                      <span
+                        className="dashboard-legenda-bolinha"
                         style={{
-                          width: `${(item.total / maiorCidade) * 100}%`,
-                          animationDelay: `${index * 80}ms`,
+                          background: CORES_PIZZA[index % CORES_PIZZA.length],
                         }}
                       />
-                    </div>
-                    <span className="dashboard-barra-valor">
-                      {item.total}{" "}
-                      <span className="dashboard-barra-percentual">
-                        ({percentual}%)
+                      <span className="dashboard-legenda-sigla">
+                        {item.estado === "Não informado"
+                          ? "-"
+                          : item.estado}
                       </span>
-                    </span>
-                  </div>
-                );
-              })}
+                      <span className="dashboard-legenda-percentual">
+                        {percentual}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
 
       {/* Top prioritários */}
-      <div className="dashboard-bloco dashboard-bloco-largo">
+      <motion.div
+        className="dashboard-bloco dashboard-bloco-largo"
+        custom={3}
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+      >
         <h2>🎯 Top 10 leads mais prioritários</h2>
         {dados.topPrioritarios.length === 0 ? (
           <p className="dashboard-vazio-texto">
@@ -289,16 +378,18 @@ function Dashboard() {
             </tbody>
           </table>
         )}
-      </div>
+      </motion.div>
 
-      {modal && (
-        <ModalLeadsFiltro
-          titulo={modal.titulo}
-          filtro={modal.filtro}
-          onFechar={() => setModal(null)}
-          onLeadExcluido={recarregarEstatisticas}
-        />
-      )}
+      <AnimatePresence>
+        {modal && (
+          <ModalLeadsFiltro
+            titulo={modal.titulo}
+            filtro={modal.filtro}
+            onFechar={() => setModal(null)}
+            onLeadExcluido={recarregarEstatisticas}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
