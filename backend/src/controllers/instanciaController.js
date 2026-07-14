@@ -41,14 +41,21 @@ async function criarInstancia(req, res) {
   }
 }
 
-await evolutionApi.post(`/webhook/set/${nomeInstancia}`, {
-  webhook: {
-    url: `${process.env.BACKEND_URL}/webhook/evolution`,
-    events: ["MESSAGES_UPSERT"],
-    enabled: true,
-    webhookByEvents: false,
-  },
-});
+try {
+  await evolutionApi.post(`/webhook/set/${nomeInstancia}`, {
+    webhook: {
+      url: `${process.env.BACKEND_URL}/webhook/evolution`,
+      events: ["MESSAGES_UPSERT"],
+      enabled: true,
+      webhookByEvents: false,
+    },
+  });
+} catch (erroWebhook) {
+  console.error(
+    "Aviso: falha ao registrar webhook:",
+    erroWebhook.response?.data || erroWebhook.message,
+  );
+}
 
 async function listarInstancias(req, res) {
   const usuarioId = req.usuarioId;
