@@ -1,5 +1,5 @@
-const axios = require('axios');
-const prisma = require('../prismaClient');
+const axios = require("axios");
+const prisma = require("../prismaClient");
 
 const evolutionApi = axios.create({
   baseURL: process.env.EVOLUTION_API_URL,
@@ -13,20 +13,20 @@ async function criarInstancia(req, res) {
   const usuarioId = req.usuarioId;
 
   if (!nomeInstancia) {
-    return res.status(400).json({ erro: 'Nome da instância é obrigatório' });
+    return res.status(400).json({ erro: "Nome da instância é obrigatório" });
   }
 
   try {
-    const respostaEvolution = await evolutionApi.post('/instance/create', {
+    const respostaEvolution = await evolutionApi.post("/instance/create", {
       instanceName: nomeInstancia,
       qrcode: true,
-      integration: 'WHATSAPP-BAILEYS',
+      integration: "WHATSAPP-BAILEYS",
     });
 
     const novaInstancia = await prisma.whatsappInstance.create({
       data: {
         nomeInstancia,
-        status: 'aguardando_qrcode',
+        status: "aguardando_qrcode",
         usuarioId,
       },
     });
@@ -37,9 +37,18 @@ async function criarInstancia(req, res) {
     });
   } catch (erro) {
     console.error(erro.response?.data || erro.message);
-    return res.status(500).json({ erro: 'Erro ao criar instância' });
+    return res.status(500).json({ erro: "Erro ao criar instância" });
   }
 }
+
+await evolutionApi.post(`/webhook/set/${nomeInstancia}`, {
+  webhook: {
+    url: `${process.env.BACKEND_URL}/webhook/evolution`,
+    events: ["MESSAGES_UPSERT"],
+    enabled: true,
+    webhookByEvents: false,
+  },
+});
 
 async function listarInstancias(req, res) {
   const usuarioId = req.usuarioId;
@@ -51,7 +60,7 @@ async function listarInstancias(req, res) {
     return res.json({ instancias });
   } catch (erro) {
     console.error(erro);
-    return res.status(500).json({ erro: 'Erro ao listar instâncias' });
+    return res.status(500).json({ erro: "Erro ao listar instâncias" });
   }
 }
 
@@ -59,10 +68,13 @@ async function verificarStatus(req, res) {
   const { nomeInstancia } = req.params;
 
   try {
-    const resposta = await evolutionApi.get(`/instance/connectionState/${nomeInstancia}`);
+    const resposta = await evolutionApi.get(
+      `/instance/connectionState/${nomeInstancia}`,
+    );
     const estado = resposta.data.instance?.state;
 
-    const statusTraduzido = estado === 'open' ? 'conectado' : 'aguardando_qrcode';
+    const statusTraduzido =
+      estado === "open" ? "conectado" : "aguardando_qrcode";
 
     await prisma.whatsappInstance.updateMany({
       where: { nomeInstancia },
@@ -72,7 +84,7 @@ async function verificarStatus(req, res) {
     return res.json({ status: statusTraduzido });
   } catch (erro) {
     console.error(erro.response?.data || erro.message);
-    return res.status(500).json({ erro: 'Erro ao verificar status' });
+    return res.status(500).json({ erro: "Erro ao verificar status" });
   }
 }
 
@@ -83,11 +95,16 @@ async function excluirInstancia(req, res) {
     await prisma.whatsappInstance.delete({
       where: { id: Number(id) },
     });
-    return res.json({ mensagem: 'Instância excluída com sucesso' });
+    return res.json({ mensagem: "Instância excluída com sucesso" });
   } catch (erro) {
     console.error(erro);
-    return res.status(500).json({ erro: 'Erro ao excluir instância' });
+    return res.status(500).json({ erro: "Erro ao excluir instância" });
   }
 }
 
-module.exports = { criarInstancia, listarInstancias, verificarStatus, excluirInstancia };
+module.exports = {
+  criarInstancia,
+  listarInstancias,
+  verificarStatus,
+  excluirInstancia,
+};

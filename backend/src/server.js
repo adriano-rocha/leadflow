@@ -8,6 +8,7 @@ const instanciaRoutes = require('./routes/instanciaRoutes');
 const workflowRoutes = require('./routes/workflowRoutes');
 const disparoRoutes = require('./routes/disparoRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const webhookRoutes = require('./routes/webhookRoutes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/instancias', instanciaRoutes);
 app.use('/workflows', workflowRoutes);
 app.use('/disparo', disparoRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/webhook', webhookRoutes);
 
 const autenticar = require("./middlewares/authMiddleware");
 

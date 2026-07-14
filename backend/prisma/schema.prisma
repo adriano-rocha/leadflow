@@ -19,18 +19,20 @@ model Usuario {
 }
 
 model Lead {
-  id       Int      @id @default(autoincrement())
-  nome     String
-  telefone String
-  endereco String
-  segmento String
-  cidade   String
-  status   String   @default("Novo")
-  urlSite  String?
-  temSiteProprio Boolean  @default(false)
-  avaliacao            Float @default(0)
-  quantidadeAvaliacoes Int   @default(0)
-  criadoEm DateTime @default(now())
+  id                    Int      @id @default(autoincrement())
+  nome                  String
+  telefone              String
+  endereco              String
+  segmento              String
+  cidade                String
+  status                String   @default("Novo")
+  urlSite               String?
+  proximoWorkflowId     Int?
+  instanciaAguardandoId Int?
+  temSiteProprio        Boolean  @default(false)
+  avaliacao             Float    @default(0)
+  quantidadeAvaliacoes  Int      @default(0)
+  criadoEm              DateTime @default(now())
 
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
   usuarioId Int
